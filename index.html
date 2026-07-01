@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Criativa Organize</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+font-family:Arial,sans-serif;
+background:linear-gradient(180deg,#fff7f0,#f4d7c5,#8b4a2f);
+color:#4a2417;
+min-height:100vh;
+}
+
+.hidden{display:none!important}
+
+.container{
+max-width:620px;
+margin:auto;
+padding:22px;
+}
+
+.login{
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:25px;
+}
+
+.box,.card{
+background:rgba(255,255,255,.94);
+border-radius:28px;
+padding:22px;
+margin-top:18px;
+box-shadow:0 12px 30px rgba(80,30,10,.18);
+}
+
+h1,h2{
+text-align:center;
+color:#66301E;
+}
+
+.sub{
+text-align:center;
+font-weight:bold;
+color:#8b4a2f;
+margin-top:8px;
+}
+
+label{
+display:block;
+margin-top:13px;
+font-weight:bold;
+}
+
+input,select,textarea{
+width:100%;
+padding:14px;
+margin-top:7px;
+border-radius:16px;
+border:1px solid #c99b7c;
+background:#fffaf7;
+font-size:16px;
+color:#4a2417;
+}
+
+textarea{
+height:75px;
+resize:none;
+}
+
+button{
+border:none;
+cursor:pointer;
+font-weight:bold;
+}
+
+.btn{
+width:100%;
+padding:15px;
+margin-top:15px;
+border-radius:18px;
+background:linear-gradient(135deg,#66301E,#b98254,#d8b071);
+color:white;
+font-size:16px;
+}
+
+.btn2{
+background:#fff;
+color:#66301E;
+border:1px solid #b98254;
+}
+
+.servico{
+display:flex;
+gap:8px;
+align-items:center;
+background:#fff7f0;
+border:1px solid #e2bfa8;
+border-radius:14px;
+padding:10px;
+margin-top:8px;
+}
+
+.servico input{
+width:22px;
+height:22px;
+margin:0;
+}
+
+.total{
+font-size:26px;
+text-align:center;
+font-weight:bold;
+color:#66301E;
+margin-top:15px;
+}
+
+.resumo{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-top:14px;
+}
+
+.mini{
+background:#fff7f0;
+border-radius:16px;
+padding:12px;
+text-align:center;
+border:1px solid #e2bfa8;
+}
+
+.valor{
+font-size:22px;
+font-weight:bold;
+color:#66301E;
+}
+
+.item{
+background:#fff7f0;
+border-left:5px solid #66301E;
+border-radius:16px;
+padding:12px;
+margin-top:10px;
+line-height:1.6;
+}
+
+.ok{color:green;font-weight:bold}
+.no{color:#b91c1c;font-weight:bold}
+
+.del{
+background:#b91c1c;
+color:white;
+border-radius:10px;
+padding:9px 12px;
+margin-top:8px;
+}
+
+footer{
+text-align:center;
+margin-top:20px;
+font-size:12px;
+color:#66301E;
+font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="login" id="login">
+  <div class="box">
+    <h1>Criativa Organize</h1>
+    <p class="sub">Controle mensal de pedidos e anúncios</p>
+
+    <label>Senha</label>
+    <input type="password" id="senha" placeholder="Digite a senha">
+
+    <button class="btn" onclick="entrar()">Entrar</button>
+  </div>
+</div>
+
+<div class="container hidden" id="app">
+
+<h1>Criativa Organize</h1>
+<p class="sub">Pedidos, entrada, anúncio e lucro por mês</p>
+
+<div class="card">
+<h2>Resumo do mês</h2>
+
+<label>Escolha o mês</label>
+<input type="month" id="mesFiltro" onchange="atualizar()">
+
+<div class="resumo">
+<div class="mini"><div>Entrada serviços</div><div class="valor" id="entrada">R$0,00</div></div>
+<div class="mini"><div>Saída anúncio</div><div class="valor" id="saida">R$0,00</div></div>
+<div class="mini"><div>Lucro</div><div class="valor" id="lucro">R$0,00</div></div>
+<div class="mini"><div>Pedidos</div><div class="valor" id="qtd">0</div></div>
+</div>
+</div>
+
+<div class="card">
+<h2>Adicionar gasto de anúncio</h2>
+
+<label>Data do anúncio</label>
+<input type="date" id="dataAnuncio">
+
+<label>Valor gasto no anúncio</label>
+<input type="text" id="valorAnuncio" placeholder="Ex: 45,50">
+
+<button class="btn" onclick="salvarAnuncio()">Adicionar anúncio</button>
+
+<div id="listaAnuncios"></div>
+</div>
+
+<div class="card">
+<h2>Novo pedido</h2>
+
+<label>Nome da cliente</label>
+<input id="cliente" placeholder="Nome da cliente">
+
+<label>Serviços</label>
+<div id="servicos"></div>
+
+<div class="total" id="total">Total: R$0,00</div>
+
+<label>Data</label>
+<input type="date" id="data">
+
+<label>Horário</label>
+<input type="time" id="hora">
+
+<label>Prazo</label>
+<input id="prazo" placeholder="Ex: 24h, amanhã, 18:00...">
+
+<label>Pago?</label>
+<select id="pago">
+<option value="sim">Sim</option>
+<option value="nao">Não</option>
+</select>
+
+<label>Entregue?</label>
+<select id="entregue">
+<option value="nao">Não</option>
+<option value="sim">Sim</option>
+</select>
+
+<label>Observação</label>
+<textarea id="obs" placeholder="Ex: pediu alteração, falta mandar arquivo..."></textarea>
+
+<button class="btn" onclick="salvarPedido()">Salvar pedido</button>
+</div>
+
+<div class="card">
+<h2>Pedidos do mês</h2>
+<div id="listaPedidos"></div>
+</div>
+
+<footer>Criativa Organize ✨</footer>
+</div>
+
+<script>
+const listaServicos=[
+{nome:"Logotipo",valor:10},
+{nome:"Marca d’água",valor:15},
+{nome:"Logotipo com bonequinha",valor:32},
+{nome:"Artes digitais para comércios",valor:25},
+{nome:"Bonequinha da profissão simples",valor:15},
+{nome:"Cartão de visita digital",valor:10},
+{nome:"Quatro figurinhas",valor:18},
+{nome:"Quatro figurinhas promoção",valor:16},
+{nome:"Tabela de preço simples",valor:20},
+{nome:"Tabela de preço com bonequinho",valor:30},
+{nome:"Foto de perfil premium",valor:18},
+{nome:"Adicionar WhatsApp no Instagram",valor:5},
+{nome:"Logotipo que não tem modelo",valor:17},
+{nome:"Variação de marca d’água",valor:7},
+{nome:"Duas variações de marca d’água",valor:10}
+];
+
+let pedidos=JSON.parse(localStorage.getItem("criativaPedidosMensalV2"))||[];
+let anuncios=JSON.parse(localStorage.getItem("criativaAnunciosDiariosV2"))||[];
+
+function entrar(){
+if(document.getElementById("senha").value==="flor8"){
+document.getElementById("login").style.display="none";
+document.getElementById("app").classList.remove("hidden");
+if(!mesFiltro.value) mesFiltro.value=new Date().toISOString().slice(0,7);
+montarServicos();
+atualizar();
+}else{
+alert("Senha incorreta.");
+}
+}
+
+function dinheiro(v){
+return Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+}
+
+function numeroBR(v){
+return Number(String(v).replace(",", ".")) || 0;
+}
+
+function salvar(){
+localStorage.setItem("criativaPedidosMensalV2",JSON.stringify(pedidos));
+localStorage.setItem("criativaAnunciosDiariosV2",JSON.stringify(anuncios));
+}
+
+function montarServicos(){
+let box=document.getElementById("servicos");
+box.innerHTML="";
+listaServicos.forEach((s,i)=>{
+box.innerHTML+=`
+<label class="servico">
+<input type="checkbox" value="${i}" onchange="calcularTotal()">
+<span>${s.nome} - ${dinheiro(s.valor)}</span>
+</label>`;
+});
+}
+
+function selecionados(){
+return [...document.querySelectorAll("#servicos input:checked")]
+.map(c=>listaServicos[Number(c.value)]);
+}
+
+function calcularTotal(){
+let total=selecionados().reduce((s,i)=>s+i.valor,0);
+document.getElementById("total").innerText="Total: "+dinheiro(total);
+}
+
+function salvarAnuncio(){
+let data=document.getElementById("dataAnuncio").value;
+let valor=numeroBR(document.getElementById("valorAnuncio").value);
+
+if(!data || !valor){
+alert("Preencha data e valor do anúncio.");
+return;
+}
+
+anuncios.push({data,valor});
+salvar();
+
+document.getElementById("dataAnuncio").value="";
+document.getElementById("valorAnuncio").value="";
+
+atualizar();
+}
+
+function excluirAnuncio(index){
+if(confirm("Excluir esse gasto de anúncio?")){
+anuncios.splice(index,1);
+salvar();
+atualizar();
+}
+}
+
+function salvarPedido(){
+let serv=selecionados();
+let nomeCliente=document.getElementById("cliente").value;
+let dataPedido=document.getElementById("data").value;
+
+if(!nomeCliente || serv.length===0 || !dataPedido){
+alert("Preencha cliente, serviço e data.");
+return;
+}
+
+let valor=serv.reduce((s,i)=>s+i.valor,0);
+
+pedidos.push({
+cliente:nomeCliente,
+servicos:serv.map(s=>s.nome),
+valor,
+data:dataPedido,
+hora:document.getElementById("hora").value,
+prazo:document.getElementById("prazo").value,
+pago:document.getElementById("pago").value,
+entregue:document.getElementById("entregue").value,
+obs:document.getElementById("obs").value
+});
+
+salvar();
+
+document.getElementById("cliente").value="";
+document.getElementById("data").value="";
+document.getElementById("hora").value="";
+document.getElementById("prazo").value="";
+document.getElementById("obs").value="";
+document.querySelectorAll("#servicos input").forEach(c=>c.checked=false);
+
+calcularTotal();
+atualizar();
+}
+
+function excluirPedido(i){
+if(confirm("Excluir pedido?")){
+pedidos.splice(i,1);
+salvar();
+atualizar();
+}
+}
+
+function atualizar(){
+let mes=mesFiltro.value||new Date().toISOString().slice(0,7);
+
+let pedidosMes=pedidos.map((p,i)=>({...p,index:i}))
+.filter(p=>p.data && p.data.startsWith(mes));
+
+let anunciosMes=anuncios.map((a,i)=>({...a,index:i}))
+.filter(a=>a.data && a.data.startsWith(mes));
+
+let entrada=pedidosMes.filter(p=>p.pago==="sim").reduce((s,p)=>s+p.valor,0);
+let saida=anunciosMes.reduce((s,a)=>s+a.valor,0);
+
+document.getElementById("entrada").innerText=dinheiro(entrada);
+document.getElementById("saida").innerText=dinheiro(saida);
+document.getElementById("lucro").innerText=dinheiro(entrada-saida);
+document.getElementById("qtd").innerText=pedidosMes.length;
+
+mostrarAnuncios(anunciosMes);
+mostrarPedidos(pedidosMes);
+}
+
+function mostrarAnuncios(lista){
+let box=document.getElementById("listaAnuncios");
+box.innerHTML="";
+
+if(lista.length===0){
+box.innerHTML="<p class='sub'>Nenhum anúncio anotado nesse mês.</p>";
+return;
+}
+
+lista.slice().reverse().forEach(a=>{
+box.innerHTML+=`
+<div class="item">
+<strong>Data:</strong> ${a.data}<br>
+<strong>Valor:</strong> ${dinheiro(a.valor)}<br>
+<button class="del" onclick="excluirAnuncio(${a.index})">Excluir</button>
+</div>`;
+});
+}
+
+function mostrarPedidos(lista){
+let box=document.getElementById("listaPedidos");
+box.innerHTML="";
+
+if(lista.length===0){
+box.innerHTML="<p class='sub'>Nenhum pedido nesse mês.</p>";
+return;
+}
+
+lista.slice().reverse().forEach(p=>{
+box.innerHTML+=`
+<div class="item">
+<strong>Cliente:</strong> ${p.cliente}<br>
+<strong>Serviços:</strong><br>${p.servicos.join("<br>")}<br>
+<strong>Valor:</strong> ${dinheiro(p.valor)}<br>
+<strong>Data:</strong> ${p.data}<br>
+<strong>Hora:</strong> ${p.hora||"-"}<br>
+<strong>Prazo:</strong> ${p.prazo||"-"}<br>
+<strong>Pago:</strong> <span class="${p.pago==="sim"?"ok":"no"}">${p.pago==="sim"?"Sim":"Não"}</span><br>
+<strong>Entregue:</strong> <span class="${p.entregue==="sim"?"ok":"no"}">${p.entregue==="sim"?"Sim":"Não"}</span><br>
+<strong>Obs:</strong> ${p.obs||"-"}<br>
+<button class="del" onclick="excluirPedido(${p.index})">Excluir</button>
+</div>`;
+});
+}
+</script>
+
+</body>
+</html>
